@@ -1,0 +1,11 @@
+﻿<Application x:Class="MemePaster.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:MemePaster.Converters"
+            xmlns:local="clr-namespace:MemePaster"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter" />
+        <converters:PathToNameConverter x:Key="PathToNameConverter" />
+    </Application.Resources>
+</Application>
