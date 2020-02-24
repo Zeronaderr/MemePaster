@@ -1,0 +1,38 @@
+﻿<Window x:Class="MemePaster.InsertKeyView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:b="clr-namespace:MemePaster.Utils"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:local="clr-namespace:MemePaster"
+             WindowStyle="None" ResizeMode="NoResize"
+             Height="200" Width="400" WindowStartupLocation="CenterOwner"
+             mc:Ignorable="d">
+    <Window.InputBindings>
+        <KeyBinding Key="Esc" Command="{Binding CloseWindowCommand}" />
+    </Window.InputBindings>
+    <Window.DataContext>
+        <local:InsertKeyViewModel />
+    </Window.DataContext>
+    <Border BorderBrush="{StaticResource Color1}" BorderThickness="2" Background="{StaticResource BackgroundColor}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="PRESS KEY COMBINATION" Grid.Row="0" Margin="0,30" HorizontalAlignment="Center" 
+                       Foreground="{StaticResource Color1}" FontSize="16" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1">
+                <TextBlock Text="{Binding Modifier,Converter={StaticResource KeyToStringConverter}}" Margin="5,0"
+                           Foreground="{StaticResource Color1}"/>
+                <TextBlock Text=" + " Foreground="{StaticResource Color1}" />
+                <TextBlock Text="{Binding PressedKey,Converter={StaticResource KeyToStringConverter}}" Margin="5,0"
+                           Foreground="{StaticResource Color1}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+    <i:Interaction.Behaviors>
+        <b:InsertKeyWindowBehavior OnKeyPressCommand="{Binding KeyPressCommand}" WindowClosed="{Binding WindowClosed}" />
+    </i:Interaction.Behaviors>
+</Window>

@@ -13,11 +13,12 @@ namespace MemePaster
     {
         public MainWindow()
         {
-            var mainWindow = new MainWindowViewModel();
-            mainWindow.Window = this;
+            //var mainWindow = new MainWindowViewModel();
             InitializeComponent();
+            var mainWindow = this.DataContext as MainWindowViewModel;
+            mainWindow.Window = this;
             TrayClass trayClass = new TrayClass(this);
-            HookManager.KeyUp += mainWindow.KeyBoardClick;
+            HookManager.KeyDown += mainWindow.KeyBoardClick;
             this.Closing += mainWindow.Closing;
         }
 

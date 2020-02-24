@@ -5,7 +5,12 @@
             xmlns:local="clr-namespace:MemePaster"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter" />
-        <converters:PathToNameConverter x:Key="PathToNameConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Main.xaml"/>
+                <ResourceDictionary Source="Styles/Converters.xaml" />
+                <ResourceDictionary Source="Styles/ControlsStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

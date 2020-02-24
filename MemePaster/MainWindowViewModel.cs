@@ -1,9 +1,11 @@
 ﻿using Gma.UserActivityMonitor;
+using MemePaster.Properties;
 using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -12,20 +14,10 @@ namespace MemePaster
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Properties
-        //private bool _windowVisible;
-        public bool WindowVisible { get; set; }
-        //{
-        //    get { return _windowVisible; }
-        //    set { _windowVisible = value; }
-        //}
-        private bool _leftControlPressed;
-        public bool LeftcontrolPressed
-        {
-            get { return _leftControlPressed; }
-            set { _leftControlPressed = value; }
-        }
         private ObservableCollection<string> _memePaths;
         public ObservableCollection<string> MemePaths
         {
@@ -41,7 +33,9 @@ namespace MemePaster
             set { _memePath = value; }
         }
         public Window Window { get; set; }
-        public string Aaa { get; set; }
+        private bool WindowVisible { get; set; }
+        private Keys MajorKey { get; set; }
+        private Keys Modifier { get; set; }
         #endregion
 
         public MainWindowViewModel()
@@ -49,73 +43,100 @@ namespace MemePaster
             WindowVisible = true;
             ShowWindowCommand = new DelegateCommand(ShowWindow);
             CopyMemeCommand = new DelegateCommand<string>(CopyMeme);
-            MemePath = @"D:\memes\";
+            OpenOptionsCommand = new DelegateCommand(OpenOptions);
+            CloseCommand = new DelegateCommand(HideWindowByClose);
+
             LoadMemes();
         }
 
         #region Commands
 
-
+        public ICommand CloseCommand { get; private set; }
+        private void HideWindowByClose()
+        {
+            Window.Hide();
+            WindowVisible = false;
+        }
         internal void Closing(object sender, CancelEventArgs e)
         {
             try
             {
                 e.Cancel = true;
                 (sender as MainWindow).Hide();
+                WindowVisible = false;
             }
             catch(Exception ex)
             {
-
+                _logger.Error(ex, ex.Message);
             }
         }
 
-
-        public ICommand CopyMemeCommand { get; set; }
+        public ICommand CopyMemeCommand { get;private set; }
         private void CopyMeme(string memePath)
         {
             try
             {
-                System.Windows.Forms.Clipboard.SetDataObject(System.Drawing.Image.FromFile(memePath)); //SetImage(System.Drawing.Image.FromFile(memePath));
+                System.Windows.Forms.Clipboard.SetDataObject(System.Drawing.Image.FromFile(memePath));
             }
-            catch
+            catch(Exception ex)
             {
-
+                _logger.Error(ex, ex.Message);
             }
         }
+        public ICommand OpenOptionsCommand { get;private set; }
+        private void OpenOptions()
+        {
+            new OptionsView().ShowDialog();
+            LoadMemes();
+        }
 
-        public ICommand ShowWindowCommand { get; set; }
+        public ICommand ShowWindowCommand { get;private set; }
         public void ShowWindow()
         {
-            //WindowVisible = !WindowVisible;
-            //Window.Visibility = Window.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
             Window.Show();
             Window.Activate();
+            WindowVisible = true;
         }
         #endregion
 
         private void LoadMemes()
         {
-            var paths = Directory.GetFiles(MemePath);
-            MemePaths = new ObservableCollection<string>(paths);
+            try
+            {
+                MemePath = Settings.Default.MemePath;
+                MajorKey = (Keys)Settings.Default.MajorKey;
+                Modifier = (Keys)Settings.Default.Modifier;
+                var paths = Directory.GetFiles(MemePath);
+                MemePaths = new ObservableCollection<string>(paths.Where(x => Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".jpeg"));
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex, ex.Message);
+            }
         }
 
         public void KeyBoardClick(object sender, System.Windows.Forms.KeyEventArgs args)
         {
-            //if (args.KeyCode == Keys.LControlKey)
-            //    LeftcontrolPressed = true;
-            if (args.KeyCode == Keys.Oemtilde)
-                ShowWindow();
-        }
-        public void KeyBoardPress(object sender, System.Windows.Forms.KeyPressEventArgs args)
-        {
-            //if (args.KeyChar == 49 && LeftcontrolPressed)
-            //    ShowWindow();
-
-        }
-        public void KeyBoardRelease(object sender, System.Windows.Forms.KeyEventArgs args)
-        {
-            //if (args.KeyCode == Keys.LControlKey)
-            //    LeftcontrolPressed = false;
+            if (WindowVisible)
+                return;
+            if (args.KeyCode == MajorKey)
+            {
+                if ((Keyboard.Modifiers & ModifierKeys.Control) > 0 && (Modifier == Keys.LControlKey || Modifier == Keys.RControlKey))
+                {
+                    ShowWindow();
+                }
+                else if ((Keyboard.Modifiers & ModifierKeys.Shift) > 0 && Modifier == Keys.LShiftKey || Modifier == Keys.RShiftKey)
+                {
+                    ShowWindow();
+                }
+                else if ((Keyboard.Modifiers & ModifierKeys.Alt) > 0 && Modifier == Keys.Alt)
+                {
+                    ShowWindow();
+                }
+                //if (Keyboard.Modifiers != ModifierKeys.None && Keyboard.Modifiers.HasFlag(Modifier))
+                //if(Keys.Modifiers.HasFlag(mod))
+                //ShowWindow();
+            }
         }
     }
 }

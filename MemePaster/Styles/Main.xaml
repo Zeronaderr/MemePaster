@@ -2,6 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:MemePaster">
     <SolidColorBrush Color="Purple" x:Key="Color1" />
-    <SolidColorBrush Color="Black" x:Key="Color2" />
-    <SolidColorBrush Color="Wheat" x:Key="Color3" />
+    <SolidColorBrush Color="Turquoise" x:Key="Color2" />
+    <SolidColorBrush Color="#222222" x:Key="BackgroundColor" />
 </ResourceDictionary>

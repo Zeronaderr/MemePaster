@@ -4,12 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MemePaster"
+        xmlns:b="clr-namespace:MemePaster.Utils"
         xmlns:converters="clr-namespace:MemePaster.Converters"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
+        Background="{StaticResource BackgroundColor}"
         Title="MainWindow" Height="350" Width="500"
-        
         >
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding CloseCommand}" Key="Esc"/>
+    </Window.InputBindings>
+    <i:Interaction.Behaviors>
+        <b:InsertKeyWindowBehavior WindowClosed="{Binding WindowClosed}" />
+    </i:Interaction.Behaviors>
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
@@ -23,9 +30,12 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Row="0" Height="25" Grid.Column="0" />
-            <Button Content="Options" Grid.Row="0" Grid.Column="1" />
-            <ItemsControl ItemsSource="{Binding MemePaths}" Grid.Row="1">
+            <TextBox Grid.Row="0" Height="25" Grid.Column="0" Visibility="Hidden"
+                     Background="{StaticResource BackgroundColor}" Foreground="{StaticResource Color1}" BorderBrush="{StaticResource Color1}" />
+            <Button Content="Options" Grid.Row="0" Grid.Column="1" Command="{Binding OpenOptionsCommand}" 
+                    Height="25" Margin="5" Grid.RowSpan="2" VerticalAlignment="Top"
+                    Template="{StaticResource ButtonTemplate}" Width="50"/>
+            <ItemsControl ItemsSource="{Binding MemePaths}" Grid.Row="1" Margin="10" Name="MyItems"> 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal"/>
@@ -33,10 +43,29 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Click="Button_Click" ToolTip="{Binding .}" Command="{Binding DataContext.CopyMemeCommand,RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                CommandParameter="{Binding .}" Width="50" Height="50">
-                            <Image Source="{Binding .}" ToolTip="{Binding .,Converter={StaticResource PathToNameConverter}}" 
-                                   MaxWidth="100" MaxHeight="100"/>
+                        <Button ToolTip="{Binding .}" Command="{Binding ElementName=MyItems, Path=DataContext.CopyMemeCommand}"
+                                CommandParameter="{Binding .}" Width="50" Height="50" Margin="5">
+                            <Button.Resources>
+                                <Style TargetType="ToolTip">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ToolTip">
+                                                <Border>
+                                                    <StackPanel Orientation="Vertical">
+                                                        <TextBlock Text="{Binding .,Converter={StaticResource PathToNameConverter}}" FontWeight="Bold"
+                                                                   HorizontalAlignment="Center" Background="{StaticResource BackgroundColor}" Foreground="{StaticResource Color1}" />
+                                                        <Image Source="{Binding .}" MaxWidth="300" MaxHeight="300" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Resources>
+                            <Image Source="{Binding .}"
+                                   MaxWidth="100" MaxHeight="100">
+                                
+                            </Image>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
