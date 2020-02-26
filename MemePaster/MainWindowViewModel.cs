@@ -2,6 +2,8 @@
 using MemePaster.Properties;
 using Prism.Commands;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -25,6 +27,7 @@ namespace MemePaster
             set { _memePaths = value; }
         }
 
+        private IEnumerable<string> Memes { get; set; }
 
         private string _memePath;
         public string MemePath
@@ -32,7 +35,30 @@ namespace MemePaster
             get { return _memePath; }
             set { _memePath = value; }
         }
+
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set 
+            { 
+                _searchText = value;
+                SearchMemes(value);
+            }
+        }
+
+        private void SearchMemes(string value)
+        {
+            if(string.IsNullOrWhiteSpace(value))
+                MemePaths = new ObservableCollection<string>(Memes);
+            else
+            {
+                MemePaths = new ObservableCollection<string>(Memes.Where(x => x.ToLower().Contains(value.ToLower())));
+            }
+        }
+
         public Window Window { get; set; }
+        public System.Windows.Controls.TextBox SearchBox { get; set; }
         private bool WindowVisible { get; set; }
         private Keys MajorKey { get; set; }
         private Keys Modifier { get; set; }
@@ -46,7 +72,6 @@ namespace MemePaster
             CopyMemeCommand = new DelegateCommand<string>(CopyMeme);
             OpenOptionsCommand = new DelegateCommand(OpenOptions);
             CloseCommand = new DelegateCommand(HideWindowByClose);
-
             LoadMemes();
         }
 
@@ -121,12 +146,15 @@ namespace MemePaster
                 var dirLastCheck = Directory.GetLastWriteTime(MemePath);
                 MajorKey = (Keys)Settings.Default.MajorKey;
                 Modifier = (Keys)Settings.Default.Modifier;
-                if (lastCheck >= dirLastCheck)
-                    return;
-                Settings.Default.LastRefresh = dirLastCheck;
-                Settings.Default.Save();
-                var paths = Directory.GetFiles(MemePath);
-                MemePaths = new ObservableCollection<string>(paths.Where(x => Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".jpeg"));
+                if (lastCheck < dirLastCheck)
+                {
+                    var paths = Directory.GetFiles(MemePath);
+                    Memes = new List<string>(paths.Where(x => Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".jpeg"));
+                    Settings.Default.LastRefresh = dirLastCheck;
+                    Settings.Default.Save();
+                }
+                SearchText = string.Empty;
+                MemePaths = new ObservableCollection<string>(Memes);
             }
             catch(Exception ex)
             {
@@ -136,21 +164,27 @@ namespace MemePaster
 
         public void KeyBoardClick(object sender, System.Windows.Forms.KeyEventArgs args)
         {
-            //if (WindowVisible)
-            //    return;
-            if (args.KeyCode == MajorKey)
+            if (WindowVisible)
             {
-                if ((Keyboard.Modifiers & ModifierKeys.Control) > 0 && (Modifier == Keys.LControlKey || Modifier == Keys.RControlKey))
+                if (SearchBox != null && !SearchBox.IsFocused)
+                    SearchBox.Focus();
+            }
+            else
+            {
+                if (args.KeyCode == MajorKey)
                 {
-                    ShowWindow();
-                }
-                else if ((Keyboard.Modifiers & ModifierKeys.Shift) > 0 && Modifier == Keys.LShiftKey || Modifier == Keys.RShiftKey)
-                {
-                    ShowWindow();
-                }
-                else if ((Keyboard.Modifiers & ModifierKeys.Alt) > 0 && Modifier == Keys.Alt)
-                {
-                    ShowWindow();
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) > 0 && (Modifier == Keys.LControlKey || Modifier == Keys.RControlKey))
+                    {
+                        ShowWindow();
+                    }
+                    else if ((Keyboard.Modifiers & ModifierKeys.Shift) > 0 && Modifier == Keys.LShiftKey || Modifier == Keys.RShiftKey)
+                    {
+                        ShowWindow();
+                    }
+                    else if ((Keyboard.Modifiers & ModifierKeys.Alt) > 0 && Modifier == Keys.Alt)
+                    {
+                        ShowWindow();
+                    }
                 }
             }
         }

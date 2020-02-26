@@ -16,6 +16,7 @@ namespace MemePaster
             InitializeComponent();
             var mainWindow = this.DataContext as MainWindowViewModel;
             mainWindow.Window = this;
+            mainWindow.SearchBox = this.SearchBox;
             TrayClass trayClass = new TrayClass(this);
             HookManager.KeyDown += mainWindow.KeyBoardClick;
             this.Closing += mainWindow.Closing;

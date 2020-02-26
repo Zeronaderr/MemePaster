@@ -46,7 +46,8 @@
                 <Button Grid.Column="1" Command="{Binding CloseCommand}" Width="40" Margin="3" Template="{StaticResource ButtonTemplate}" Content="X" />
             </Grid>
             </Border>
-            <TextBox Grid.Row="1" Height="25" Grid.Column="0" Visibility="Hidden"
+            <TextBox Grid.Row="1" Height="25" Grid.Column="0" Name="SearchBox" Margin="5" VerticalContentAlignment="Center"
+                     Text="{Binding SearchText,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                      Background="{StaticResource BackgroundColor}" Foreground="{StaticResource Color1}" BorderBrush="{StaticResource Color1}" />
             <Button Content="Options" Grid.Row="1" Grid.Column="1" Command="{Binding OpenOptionsCommand}" 
                     Height="25" Margin="5" Grid.RowSpan="2" VerticalAlignment="Top"
