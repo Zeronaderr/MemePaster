@@ -7,7 +7,7 @@
         xmlns:b="clr-namespace:MemePaster.Utils"
         xmlns:converters="clr-namespace:MemePaster.Converters"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        mc:Ignorable="d"
+        mc:Ignorable="d" WindowStyle="None" 
         Background="{StaticResource BackgroundColor}"
         Title="MainWindow" Height="350" Width="500"
         >
@@ -15,8 +15,13 @@
         <KeyBinding Command="{Binding CloseCommand}" Key="Esc"/>
     </Window.InputBindings>
     <i:Interaction.Behaviors>
-        <b:InsertKeyWindowBehavior WindowClosed="{Binding WindowClosed}" />
+        <b:InsertKeyWindowBehavior OnFocusLostCommand="{Binding CloseCommand}" WindowClosed="{Binding WindowClosed}" />
     </i:Interaction.Behaviors>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="LostFocus">
+            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
@@ -24,18 +29,30 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Row="0" Height="25" Grid.Column="0" Visibility="Hidden"
+            <Border BorderBrush="{StaticResource Color1}" BorderThickness="0,0,0,2" Grid.Row="0" Grid.ColumnSpan="2" >
+                
+            <Grid Background="{StaticResource BackgroundColor}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="1" Command="{Binding CloseCommand}" Width="40" Margin="3" Template="{StaticResource ButtonTemplate}" Content="X" />
+            </Grid>
+            </Border>
+            <TextBox Grid.Row="1" Height="25" Grid.Column="0" Visibility="Hidden"
                      Background="{StaticResource BackgroundColor}" Foreground="{StaticResource Color1}" BorderBrush="{StaticResource Color1}" />
-            <Button Content="Options" Grid.Row="0" Grid.Column="1" Command="{Binding OpenOptionsCommand}" 
+            <Button Content="Options" Grid.Row="1" Grid.Column="1" Command="{Binding OpenOptionsCommand}" 
                     Height="25" Margin="5" Grid.RowSpan="2" VerticalAlignment="Top"
                     Template="{StaticResource ButtonTemplate}" Width="50"/>
-            <ItemsControl ItemsSource="{Binding MemePaths}" Grid.Row="1" Margin="10" Name="MyItems"> 
+            <ScrollViewer Grid.Row="2" Margin="10" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding MemePaths}"  Name="MyItems"> 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal"/>
@@ -70,6 +87,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Window>

@@ -58,5 +58,16 @@ namespace MemePaster.Properties {
                 this["Modifier"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.DateTime LastRefresh {
+            get {
+                return ((global::System.DateTime)(this["LastRefresh"]));
+            }
+            set {
+                this["LastRefresh"] = value;
+            }
+        }
     }
 }

@@ -36,6 +36,7 @@ namespace MemePaster
         private bool WindowVisible { get; set; }
         private Keys MajorKey { get; set; }
         private Keys Modifier { get; set; }
+        private OptionsView OptionsView { get; set; }
         #endregion
 
         public MainWindowViewModel()
@@ -54,9 +55,14 @@ namespace MemePaster
         public ICommand CloseCommand { get; private set; }
         private void HideWindowByClose()
         {
-            Window.Hide();
-            WindowVisible = false;
+            if(OptionsView == null || !OptionsView.IsVisible)
+            {
+                Window.Hide();
+                WindowVisible = false;
+            }
         }
+
+
         internal void Closing(object sender, CancelEventArgs e)
         {
             try
@@ -86,16 +92,23 @@ namespace MemePaster
         public ICommand OpenOptionsCommand { get;private set; }
         private void OpenOptions()
         {
-            new OptionsView().ShowDialog();
+            OptionsView = new OptionsView();
+            OptionsView.ShowDialog();
             LoadMemes();
         }
 
         public ICommand ShowWindowCommand { get;private set; }
         public void ShowWindow()
         {
-            Window.Show();
-            Window.Activate();
-            WindowVisible = true;
+            if (WindowVisible)
+                HideWindowByClose();
+            else
+            {
+                LoadMemes();
+                Window.Show();
+                Window.Activate();
+                WindowVisible = true;
+            }
         }
         #endregion
 
@@ -103,9 +116,15 @@ namespace MemePaster
         {
             try
             {
+                var lastCheck = Settings.Default.LastRefresh;
                 MemePath = Settings.Default.MemePath;
+                var dirLastCheck = Directory.GetLastWriteTime(MemePath);
                 MajorKey = (Keys)Settings.Default.MajorKey;
                 Modifier = (Keys)Settings.Default.Modifier;
+                if (lastCheck >= dirLastCheck)
+                    return;
+                Settings.Default.LastRefresh = dirLastCheck;
+                Settings.Default.Save();
                 var paths = Directory.GetFiles(MemePath);
                 MemePaths = new ObservableCollection<string>(paths.Where(x => Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".jpeg"));
             }
@@ -117,8 +136,8 @@ namespace MemePaster
 
         public void KeyBoardClick(object sender, System.Windows.Forms.KeyEventArgs args)
         {
-            if (WindowVisible)
-                return;
+            //if (WindowVisible)
+            //    return;
             if (args.KeyCode == MajorKey)
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Control) > 0 && (Modifier == Keys.LControlKey || Modifier == Keys.RControlKey))
@@ -133,9 +152,6 @@ namespace MemePaster
                 {
                     ShowWindow();
                 }
-                //if (Keyboard.Modifiers != ModifierKeys.None && Keyboard.Modifiers.HasFlag(Modifier))
-                //if(Keys.Modifiers.HasFlag(mod))
-                //ShowWindow();
             }
         }
     }

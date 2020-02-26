@@ -25,6 +25,21 @@ namespace MemePaster.Utils
                 SetValue(OnKeyPressCommandProperty, value);
             }
         }
+
+        public static readonly DependencyProperty OnFocusLostCommandProperty =
+            DependencyProperty.Register("OnFocusLostCommand", typeof(Prism.Commands.DelegateCommand), typeof(InsertKeyWindowBehavior));
+        public Prism.Commands.DelegateCommand OnFocusLostCommand
+        {
+            get
+            {
+                return GetValue(OnFocusLostCommandProperty) as Prism.Commands.DelegateCommand;
+            }
+            set
+            {
+                SetValue(OnFocusLostCommandProperty, value);
+            }
+        }
+
         public static readonly DependencyProperty WindowClosedProperty =
             DependencyProperty.RegisterAttached("WindowClosed", typeof(bool), typeof(InsertKeyWindowBehavior),new FrameworkPropertyMetadata(Closed)
             {
@@ -57,6 +72,19 @@ namespace MemePaster.Utils
         protected override void OnAttached()
         {
             this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
+            this.AssociatedObject.Deactivated += AssociatedObject_Deactivated;
+            this.AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown; ;
+        }
+
+        private void AssociatedObject_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.AssociatedObject.DragMove();
+        }
+
+        private void AssociatedObject_Deactivated(object sender, EventArgs e)
+        {
+            if (OnFocusLostCommand != null)
+                OnFocusLostCommand.Execute();
         }
 
         private void AssociatedObject_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)

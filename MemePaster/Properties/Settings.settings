@@ -11,5 +11,8 @@
     <Setting Name="Modifier" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">162</Value>
     </Setting>
+    <Setting Name="LastRefresh" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
