@@ -108,6 +108,7 @@ namespace MemePaster
             try
             {
                 System.Windows.Forms.Clipboard.SetDataObject(System.Drawing.Image.FromFile(memePath));
+                HideWindowByClose();
             }
             catch(Exception ex)
             {

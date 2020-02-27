@@ -17,11 +17,6 @@
     <i:Interaction.Behaviors>
         <b:InsertKeyWindowBehavior OnFocusLostCommand="{Binding CloseCommand}" WindowClosed="{Binding WindowClosed}" />
     </i:Interaction.Behaviors>
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="LostFocus">
-            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
