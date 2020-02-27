@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 
 namespace MemePaster.Utils
@@ -73,7 +74,7 @@ namespace MemePaster.Utils
         {
             this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
             this.AssociatedObject.Deactivated += AssociatedObject_Deactivated;
-            this.AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown; ;
+            this.AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
         }
 
         private void AssociatedObject_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

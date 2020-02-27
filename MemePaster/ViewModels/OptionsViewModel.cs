@@ -64,6 +64,7 @@ namespace MemePaster
             get { return _windowClosed; }
             set { _windowClosed = value; }
         }
+        #endregion
 
         public ICommand SaveOptionsCommand { get; set; }
         private void SaveOptions()
@@ -104,8 +105,9 @@ namespace MemePaster
             try
             {
                 var insertKV = new InsertKeyView();
-                insertKV.ShowDialog();
                 var vm = insertKV.DataContext as InsertKeyViewModel;
+                vm.LoadKeyCombination();
+                insertKV.ShowDialog();
                 if (vm.Valid)
                 {
                     Modifier = vm.Modifier;
@@ -118,6 +120,5 @@ namespace MemePaster
             }
         }
 
-        #endregion
     }
 }

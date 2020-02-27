@@ -72,6 +72,7 @@ namespace MemePaster
             CopyMemeCommand = new DelegateCommand<string>(CopyMeme);
             OpenOptionsCommand = new DelegateCommand(OpenOptions);
             CloseCommand = new DelegateCommand(HideWindowByClose);
+            AddMemeCommand = new DelegateCommand(AddMeme);
             LoadMemes();
         }
 
@@ -121,6 +122,23 @@ namespace MemePaster
             OptionsView = new OptionsView();
             OptionsView.ShowDialog();
             LoadMemes();
+        }
+
+        public ICommand AddMemeCommand { get; private set; }
+        private void AddMeme()
+        {
+            try
+            {
+                var view = new InsertKeyView();
+                var vm = view.DataContext as InsertKeyViewModel;
+                vm.LoadPasteMeme();
+                view.ShowDialog();
+                LoadMemes();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex, ex.Message);
+            }
         }
 
         public ICommand ShowWindowCommand { get;private set; }
