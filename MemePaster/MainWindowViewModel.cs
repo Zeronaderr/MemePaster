@@ -185,6 +185,21 @@ namespace MemePaster
         {
             if (WindowVisible)
             {
+                if (args.KeyCode == MajorKey)
+                {
+                    if ((Keyboard.Modifiers & ModifierKeys.Control) > 0 && (Modifier == Keys.LControlKey || Modifier == Keys.RControlKey))
+                    {
+                        ShowWindow();
+                    }
+                    else if ((Keyboard.Modifiers & ModifierKeys.Shift) > 0 && Modifier == Keys.LShiftKey || Modifier == Keys.RShiftKey)
+                    {
+                        ShowWindow();
+                    }
+                    else if ((Keyboard.Modifiers & ModifierKeys.Alt) > 0 && Modifier == Keys.Alt)
+                    {
+                        ShowWindow();
+                    }
+                }
                 if (SearchBox != null && !SearchBox.IsFocused)
                     SearchBox.Focus();
             }
