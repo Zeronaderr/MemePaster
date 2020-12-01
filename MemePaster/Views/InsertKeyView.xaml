@@ -11,6 +11,7 @@
              mc:Ignorable="d">
     <Window.InputBindings>
         <KeyBinding Key="Esc" Command="{Binding CloseWindowCommand}" />
+        <KeyBinding Key="V" Modifiers="Ctrl" Command="{Binding PasteMemeCommand}" />
     </Window.InputBindings>
     <Window.DataContext>
         <local:InsertKeyViewModel />
